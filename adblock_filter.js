@@ -281,6 +281,15 @@ function matching_urls(url, rule_list) {
                         domain_sublist = options[p].replace("domain=", "").split("|");
                     }
 
+                    // since our rule consisted of several possible types of file types
+                    // and different origins we decided creating an "object-like" structure
+                    // would make the most sense. our object is basically a pool of all the
+                    // possible type the rule can be, and whenever one of hte options is true
+                    // it gets set to true in the object
+
+                    // the later code inside this loop simply modifies this object as
+                    // the url gets further parsing
+
                     // if ~ exists, we know all the rules will be negated 
                     if (negated == true) {
                         blocked_rule = {
@@ -377,6 +386,10 @@ function matching_urls(url, rule_list) {
                 else if (options.indexOf("~third-party") != -1 && is_thirdparty(url) == "third-party") {
                     return false;
                 }
+
+                // in this portion we iterate over the domains if any are present, these domains can
+                // either be accepted or negated
+
                 if (domain_present) {
                     if (domain_sublist[0].indexOf("~") != -1) {
                         for (n = 0; n < domain_sublist.length; n++) {
